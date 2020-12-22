@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <title>RAIN customs</title>
+        <meta name="description" content="A list of apprived cards in RAIN">
+        <link rel="stylesheet" type="text/css" href="index.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+        </script>
+         <script src="index.js"></script>
+        <script> 
+            $(document).ready(function()
+            {
+                $("#searchButton").on("click", sendSearch);
+                 $(document).on('click','.smallCard',function(event){
+                     event.preventDefault();
+                     makeBigCard($( this ));
+                 });
+                
+                $(".arrow").on("click",function(event){
+                    event.preventDefault();
+                     cyclePage($( this ));
+                 });
+                //get servers
+                
+                $.ajax({
+                type: 'GET',
+                url: '/server',
+                success: function(data, status) {
+                    $("#server").html(data);
+                },
+
+                });
+                
+                
+            });
+        </script>
+        
+        
+        
+    </head>
+    <body>
+        <div class="main" > 
+            <table>
+                <tr>
+                    <th class="top" rowspan="2">
+                        <div id="bigCard">
+
+                        </div>
+                    </th>
+                    <th class="top">
+                        <div class="top" style="display: inline-block">
+                            <table class="top" id="searchBox">
+
+                                <tbody>
+                                    <tr>
+                                        <th colspan="3" style="text-align: center"> 
+                                            SEARCH
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>
+                                            <label for="cardName">Name: </label>
+                                        </th>
+                                        <th colspan="2">
+                                            <input class="textSearchBar" type="text" id="name" name="name" >
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>
+                                            <label for="cardDescrition">Desc:</label>
+
+                                        </th>
+                                        <th colspan="2">
+                                            <input class="textSearchBar" type="text" id="description" name="description">
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>
+                                            <label for="cardType">Card: </label>
+
+                                        </th>
+                                        <th>
+                                            <select id="cardType" name="cardTypes" onchange="getType(this)">
+                                                <option value=""></option>
+                                                <option value="Monster">Monster</option>
+                                                <option value="Spell">Spell</option>
+                                                <option value="Trap">Trap</option>
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <select id="monsterType" name="monsterTypes" class=" monsteronly" disabled=true>
+                                                <option value=""></option>
+                                                <option value="Normal">Normal</option>
+                                                <option value="Effect">Effect</option>
+                                                <option value="Ritual">Ritual</option>
+                                                <option value="Fusion">Fusion</option>
+                                                <option value="Synchro">Synchro</option>
+                                                <option value="Xyz">Xyz</option>
+                                                <option value="Link">Link</option>
+                                                <option value="Pendulum">Pendulum</option>
+
+                                            </select>
+                                        </th>
+
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <label for="type">Type: </label>
+
+                                        </th>
+                                        <th>
+                                            <select disabled=true id="type" >
+
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <select id="ability" disabled=true class="monsteronly">
+                                                <option value=""></option>
+                                                <option value="gemini">Gemini</option>
+                                                <option value="spirit">Spirit</option>
+                                                <option value="toon">Toon</option>
+                                                <option value="tuner">Tuner</option>
+                                                <option value="union">Union</option>
+                                            </select>
+                                        </th>
+
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <label for="attribute">Attrib: </label>
+
+                                        </th>
+                                        <th>
+                                            <select id = "attribute" disabled=true class="monsteronly">
+                                                <option value=""></option>
+                                                <option value="DARK">DARK</option>
+                                                <option value="DIVINE">DIVINE</option>
+                                                <option value="EARTH">EARTH</option>
+                                                <option value="fire">FIRE</option>
+                                                <option value="LIGHT">LIGHT</option>
+                                                <option value="WATER">WATER</option>
+                                                <option value="WIND">WIND</option>
+
+                                            </select>
+                                            &nbsp;
+                                            <input  disabled=true class="levelselector monsteronly" id="lowestlevel"  oninput="checkLevelValue(this);">
+                                        </th>
+                                        <th>
+                                            <label>≤ LV ≤</label>
+                                            <input  class="levelselector monsteronly" disabled=true id="highestlevel"
+                                                   oninput="checkLevelValue(this);">
+                                        </th>
+
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="2">
+                                           <input disabled=true class="statselector monsteronly" id="lowestatk" oninput="checkStatValue(this)" >
+                                            <label>≤ATK≤ </label>
+                                           <input class="statselector monsteronly" disabled=true id="highestatk" oninput="checkStatValue(this)">
+                                           <input class="statselector monsteronly" disabled=true id="lowestdef" oninput="checkStatValue(this)">
+
+                                        </th>
+                                        <th>
+                                            <label>≤DEF≤ </label>
+                                           <input class="statselector monsteronly" disabled=true id="highestdef" oninput="checkStatValue(this)">
+
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <label>Limit:</label>
+                                        </th>
+                                        <th colspan="2">
+                                            <select id ="limit">
+                                                <option value=""></option>
+                                                <!--<option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option> -->
+                                            </select>
+                                            <label>Order:</label>
+                                            <select id ="order">
+                                                <option value="date">Date</option>
+                                                <!--
+
+                                                <option value="cardtype">Card Type</option>
+                                                <option value="alphabetical">Alphabetical</option>    
+                                                -->
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3">
+                                            <label>Server:</label>
+                                            <select id="server">
+
+                                            </select>
+                                        </th>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                            <div>
+                                <input class="arrow" rel=-1 type="image" style ="margin-left: 5px;" src="images/A04_ArrowLeft.png"/>
+
+                                <div id="searchButton" class="button">
+                                    <br> Search <br> 0/0
+                                </div>
+                                <input class="arrow" rel=1 type="image" src="images/A04_ArrowRight.png" />
+                            </div>
+                        </div>
+                    
+                    </th>
+                    <th class="top"> <img src="images/A05_Name.png" class="title">
+                    </th>
+                </tr>
+                <tr>
+                    <th id= "searchedCards" colspan="2">
+                        
+                    </th>
+                    
+                    
+                </tr>
+            </table>
+            
+            
+            
+            
+            
+        </div>
+        
+        
+         
+
+    </body>
+   
+    
+    
+    
+    
+    
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
